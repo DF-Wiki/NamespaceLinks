@@ -5,9 +5,9 @@
  * Allows links to default to different namespaces based on their namespace.
  */
 
-$wgAutoloadClasses['NamespaceLinks'] = dirname(__FILE__) . '/NamespaceLinks.class.php';
+require_once 'NamespaceLinks.body.php';
 
-$wgHooks['LinkBegin'][] = 'NamespaceLinks::onLinkBegin';
+$wgHooks['InternalParseBeforeLinks'][] = 'NLHooks::parseLinks';
  
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
