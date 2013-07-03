@@ -18,3 +18,5 @@ $wgExtensionCredits['parserhook'][] = array(
 	'url' => 'https://github.com/lethosor/mw-namespace-links',
 );
 
+//$t = new Title('DF2012:abc');
+//print $t->getNamespace();
