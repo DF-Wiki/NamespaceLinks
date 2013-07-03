@@ -20,3 +20,5 @@ $wgExtensionCredits['parserhook'][] = array(
 
 //$t = new Title('DF2012:abc');
 //print $t->getNamespace();
+//$t = new Title('DF2012:abc');
+//print Linker::link($t);

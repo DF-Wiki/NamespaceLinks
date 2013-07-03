@@ -80,7 +80,13 @@ class NLHooks {
 		return true;
 	}
 	static public function parseLinks (&$parser, &$text) {
-		$text .= '<br>InternalParseBeforeLinks';
+		//$text .= "<pre>" . $parser->replaceInternalLinks($text) . "</pre>";
+		//$text .= '<br>InternalParseBeforeLinks2<br>';
+		//$t = new Title('DF2012:abc');
+		//$text .= Linker::link($t);
+		//$text .= "<pre>" . var_export($t) . "</pre>";
+		$t = Title::newFromText('DF2012:Abc');
+		$text .= "<pre>".print_r($t, true)."</pre>";
 		return true;
 	}
 }
