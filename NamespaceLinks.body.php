@@ -4,6 +4,26 @@ if (!defined('NS_MAIN')) {
 	define('NS_MAIN', 0);
 }
 
+function NLReplaceLinks($text, $nsText) {
+	/*
+	 * Assign all links in the given text with no namespace the namespace
+	 * given by $nsText
+	 */
+	$links = array();
+	preg_match_all('/\[\[[^]]+\]\]/', $text, $links);
+	$links = $links[0];
+	foreach ($links as $linkText) {
+		//$linkText = $linkText[0];
+		$link = new NLLink($linkText);
+		if (!$link->hasNS) {
+			$link->nsText = $nsText;
+		}
+		$text = str_replace($linkText, $link->render(), $text);
+	}
+	return $text;
+	
+}
+
 class NLLink {
 	/*
 	 * A basic link
@@ -13,6 +33,10 @@ class NLLink {
 	 */
 	public $contents;
 	public $hasNS;
+	public $title;
+	public $text;
+	public $ns;
+	public $nsText;
 	
 	public function __construct ($text) {
 		/*
@@ -29,14 +53,18 @@ class NLLink {
 		$linkContents = substr($linkText, 2, strlen($linkText) - 4);
 		$this->contents = $linkContents;
 		
-		/* $parts = preg_split('/:/', $linkContents, 2);
-		$linkNS = '';
+		$parts = preg_split('/\|/', $linkContents, 2);
+		$title = '';
+		$text = '';
 		if (count($parts) == 2) {
-			$linkNS = $parts[0];
-			$linkContents = $parts[1];
-		} */
+			$title = $parts[0];
+			$text = $parts[1];
+		}
+		else {
+			$title = $text = $parts[0];
+		}
 		
-		$wtitle = Title::newFromText($linkContents);
+		$wtitle = Title::newFromText($title);
 		$this->wtitle = $wtitle;
 		
 		/* Check for an explicit namespace by comparing the link contents
@@ -47,12 +75,21 @@ class NLLink {
 		
 		
 		$hasNS = false;
+		$nsText = '';
 		
-		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 && !$wtitle->mInterwiki) {
+		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 || $wtitle->mInterwiki) {
 			$hasNS = true;
+			$title = preg_split('/:/', $title, 2);
+			$nsText = $title[0];
+			$title = $title[1];
 		}
 		
 		$this->hasNS = $hasNS;
+		
+		$this->ns = $wtitle->mNamespace;
+		$this->nsText = $nsText;
+		$this->title = $title;
+		$this->text = $text;
 		
 	}
 	public function render () {
@@ -61,27 +98,23 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
-		return;
+		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
 	}
 }
 
 class NLHooks {
-	static public function onLinkBegin ($skin, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
-		//print "$target//$text<br>\n";
-		//print_r($target);
-		//print $text;
-		//print $target->setNamespace(1000) . "\n";
-		$text = "$text Hello";
-		return true;
-	}
 	static public function parseLinks (&$parser, &$text) {
 		//$t = new Title('DF2012:abc');
 		//$text .= Linker::link($t);
 		//$text .= "<pre>" . var_export($t) . "</pre>";
 		//$t = Title::newFromText('Main:Abc');
 		//$text .= "<pre>".print_r($t, true)."</pre>";
-		$l = new NLLink('[[wikipedia:Cat]]');
-		$text .= "<pre>".print_r($l, true)."</pre>";
+		$oldText = $text;
+		//$l = new NLLink('[[Cat|kitty]]');
+		//$ns = $l->wtitle->getNamespace();
+		//$text .= "<pre>".print_r($l, true)."</pre><pre>".print_r($ns,true)."</pre>";
+		$newText = NLReplaceLinks($text, 'CAT');
+		$text .= "<pre>$text</pre><pre>$newText</pre>";
 		return true;
 	}
 }
