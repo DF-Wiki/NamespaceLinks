@@ -11,19 +11,12 @@ class NLLink {
 	 * Extracts page (with namespace) and text from a wiki link, but not
 	 * the suffix (if it exists)
 	 */
-	public $title;
-	public $ns;
-	public $text;
+	public $contents;
+	public $hasNS;
 	
 	public function __construct ($text) {
 		/*
 		 * Takes a string of text in wiki link format
-		 *
-		 * Examples:
-		 * [title] -> $title=title, $ns=NS_MAIN, $text=title
-		 * [ns:title] -> $title=title, $ns=ns, $text=title
-		 * [title|text] -> $title=title, $ns=NS_MAIN, $text=text
-		 * [ns:title|text] -> $title=title, $ns=ns, $text=text
 		 */
 		// Safety check
 		$matches = array();
@@ -34,28 +27,33 @@ class NLLink {
 		$linkText = $matches[0];
 		// Remove leading [[ and trailing ]]
 		$linkContents = substr($linkText, 2, strlen($linkText) - 4);
-		// Separate namespace
-		$parts = preg_split('/:/', $linkContents, 2);
-		if (count($parts) == 1) {
-			// NS is main by default
-			$this->ns = 'Main';
-			$linkNS = '';
-		}
-		else {
-			// Extract namespace from link
+		$this->contents = $linkContents;
+		
+		/* $parts = preg_split('/:/', $linkContents, 2);
+		$linkNS = '';
+		if (count($parts) == 2) {
 			$linkNS = $parts[0];
-			$this->ns = $parts[0];
 			$linkContents = $parts[1];
+		} */
+		
+		$wtitle = Title::newFromText($linkContents);
+		$this->wtitle = $wtitle;
+		
+		/* Check for an explicit namespace by comparing the link contents
+		 * with $wtitle->mUserCaseDBKey (which is the original, case-sensitive
+		 * title). If they aren't equal, then that means a namespace was
+		 * parsed out
+		 */
+		
+		
+		$hasNS = false;
+		
+		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 && !$wtitle->mInterwiki) {
+			$hasNS = true;
 		}
-		// Check to see if link text is provided
-		$parts = preg_split('/\|/', $linkContents, 2);
-		if (count($parts) == 1) {
-			// No text, so link title is text
-			$linkContents = "$linkContents|$linkContents";
-		}
-		$parts = preg_split('/\|/', $linkContents);
-		$this->title = $parts[0];
-		$this->text = $parts[1];
+		
+		$this->hasNS = $hasNS;
+		
 	}
 	public function render () {
 		/*
@@ -63,12 +61,9 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
-		return "[[{$this->ns}:{$this->title}|{$this->text}]]";
+		return;
 	}
 }
-
-//$l = new NLLink('[[a:b]]');
-//print $l->render();
 
 class NLHooks {
 	static public function onLinkBegin ($skin, $target, &$text, &$customAttribs, &$query, &$options, &$ret) {
@@ -80,13 +75,13 @@ class NLHooks {
 		return true;
 	}
 	static public function parseLinks (&$parser, &$text) {
-		//$text .= "<pre>" . $parser->replaceInternalLinks($text) . "</pre>";
-		//$text .= '<br>InternalParseBeforeLinks2<br>';
 		//$t = new Title('DF2012:abc');
 		//$text .= Linker::link($t);
 		//$text .= "<pre>" . var_export($t) . "</pre>";
-		$t = Title::newFromText('DF2012:Abc');
-		$text .= "<pre>".print_r($t, true)."</pre>";
+		//$t = Title::newFromText('Main:Abc');
+		//$text .= "<pre>".print_r($t, true)."</pre>";
+		$l = new NLLink('[[wikipedia:Cat]]');
+		$text .= "<pre>".print_r($l, true)."</pre>";
 		return true;
 	}
 }
