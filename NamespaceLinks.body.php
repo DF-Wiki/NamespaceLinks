@@ -4,7 +4,7 @@ if (!defined('NS_MAIN')) {
 	define('NS_MAIN', 0);
 }
 
-function NLReplaceLinks($text, $nsText) {
+function NLReplaceLinks ($text, $nsText) {
 	/*
 	 * Assign all links in the given text with no namespace the namespace
 	 * given by $nsText
@@ -16,12 +16,19 @@ function NLReplaceLinks($text, $nsText) {
 		//$linkText = $linkText[0];
 		$link = new NLLink($linkText);
 		if (!$link->hasNS) {
+			//PVD($link);
 			$link->nsText = $nsText;
 		}
 		$text = str_replace($linkText, $link->render(), $text);
 	}
 	return $text;
 	
+}
+
+function NLParseConfig ($text) {
+	$text = preg_replace('/\n+/', "\n", $text);
+	$text = str_replace("\r", "", $text);
+	$lines = preg_split('/\n/', $text);
 }
 
 class NLLink {
@@ -77,7 +84,9 @@ class NLLink {
 		$hasNS = false;
 		$nsText = '';
 		
-		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 || $wtitle->mInterwiki) {
+		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 ||
+		    $wtitle->mInterwiki ||
+		    $wtitle->mNamespace) {
 			$hasNS = true;
 			$title = preg_split('/:/', $title, 2);
 			$nsText = $title[0];
@@ -91,6 +100,7 @@ class NLLink {
 		$this->title = $title;
 		$this->text = $text;
 		
+		
 	}
 	public function render () {
 		/*
@@ -98,23 +108,24 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
+		if ($this->text == 'A') {
+			PVD($this->contents);
+		}
 		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
 	}
 }
 
 class NLHooks {
 	static public function parseLinks (&$parser, &$text) {
-		//$t = new Title('DF2012:abc');
-		//$text .= Linker::link($t);
-		//$text .= "<pre>" . var_export($t) . "</pre>";
-		//$t = Title::newFromText('Main:Abc');
-		//$text .= "<pre>".print_r($t, true)."</pre>";
+		//$l=new NLLink('[[Category:yyyyy:zzzzz]]');
+		//PVD($l);
+		//PVD($l->render());
+		$currentNS = $parser->mTitle->getNamespace();
+		$currentNSName = ''; // fill in
+		$defaultNSName = 'Masterwork';
 		$oldText = $text;
-		//$l = new NLLink('[[Cat|kitty]]');
-		//$ns = $l->wtitle->getNamespace();
-		//$text .= "<pre>".print_r($l, true)."</pre><pre>".print_r($ns,true)."</pre>";
-		$newText = NLReplaceLinks($text, 'CAT');
-		$text .= "<pre>$text</pre><pre>$newText</pre>";
+		$newText = NLReplaceLinks($text, $defaultNSName);
+		$text .= "<pre>$oldText</pre><pre>$newText</pre>";
 		return true;
 	}
 }
