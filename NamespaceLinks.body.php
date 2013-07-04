@@ -1,9 +1,5 @@
 <?php
 
-if (!defined('NS_MAIN')) {
-	define('NS_MAIN', 0);
-}
-
 function NLReplaceLinks ($text, $nsText) {
 	/*
 	 * Assign all links in the given text with no namespace the namespace
@@ -13,10 +9,8 @@ function NLReplaceLinks ($text, $nsText) {
 	preg_match_all('/\[\[[^]]+\]\]/', $text, $links);
 	$links = $links[0];
 	foreach ($links as $linkText) {
-		//$linkText = $linkText[0];
 		$link = new NLLink($linkText);
 		if (!$link->hasNS) {
-			//PVD($link);
 			$link->nsText = $nsText;
 		}
 		$text = str_replace($linkText, $link->render(), $text);
@@ -108,9 +102,6 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
-		if ($this->text == 'A') {
-			PVD($this->contents);
-		}
 		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
 	}
 }
