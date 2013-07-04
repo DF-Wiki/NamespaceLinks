@@ -19,10 +19,36 @@ function NLReplaceLinks ($text, $nsText) {
 	
 }
 
+function NLNSNameToID ($nsName) {
+	//PVD(debug_backtrace());
+	//set_error_handler('PVD');
+	$t = Title::newFromText("$nsName:Dummy text");
+	return $t->mNamespace;
+}
+
 function NLParseConfig ($text) {
+	/*
+	 * Parses configuration text, in the following format:
+	 *
+	 * *ns=defaultns
+	 * *ns2=defaultns2
+	 * ...
+	 * 
+	 * Returns an array of old_ns_id => new_ns_name pairs (for convenience)
+	 */
+	$map = array();
 	$text = preg_replace('/\n+/', "\n", $text);
 	$text = str_replace("\r", "", $text);
 	$lines = preg_split('/\n/', $text);
+	foreach ($lines as $line) {
+		$line = preg_replace('/^\*/', '', $line);
+		$parts = preg_split('/=/', $line, 2);
+		if (count($parts) == 1) { // bad syntax
+			continue;
+		}
+		$map[NLNSNameToID($parts[0])] = $parts[1];
+	}
+	return $map;
 }
 
 class NLLink {
@@ -106,11 +132,17 @@ class NLLink {
 	}
 }
 
+$wgNLConfigMap = array();
 class NLHooks {
+	static public function init (&$parser) {
+		global $wgNLConfigText, $wgNLConfigMap;
+		$wgNLConfigMap = NLParseConfig($wgNLConfigText);
+		return true;
+	}
 	static public function parseLinks (&$parser, &$text) {
-		$currentNS = $parser->mTitle->getNamespace();
-		$currentNSName = ''; // fill in
-		$defaultNSName = 'Masterwork';
+		global $wgNLConfigMap;
+		$currentNSID = $parser->mTitle->getNamespace();
+		$defaultNSName = $wgNLConfigMap[$currentNSID];
 		$oldText = $text;
 		$newText = NLReplaceLinks($text, $defaultNSName);
 		$text = $newText;

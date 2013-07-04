@@ -7,6 +7,7 @@
 
 require_once 'NamespaceLinks.body.php';
 
+$wgHooks['ParserFirstCallInit'][] = 'NLHooks::init';
 $wgHooks['InternalParseBeforeLinks'][] = 'NLHooks::parseLinks';
  
 $wgExtensionCredits['parserhook'][] = array(
@@ -18,7 +19,9 @@ $wgExtensionCredits['parserhook'][] = array(
 	'url' => 'https://github.com/lethosor/mw-namespace-links',
 );
 
-//$t = new Title('DF2012:abc');
-//print $t->getNamespace();
-//$t = new Title('DF2012:abc');
-//print Linker::link($t);
+$wgNLConfigText = <<< TEXT
+*DF2012=DF2012
+*DF2012 talk=DF2012
+*v0.31=v0.31
+*v0.31 talk=v0.31
+TEXT;
