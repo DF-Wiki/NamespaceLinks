@@ -117,15 +117,12 @@ class NLLink {
 
 class NLHooks {
 	static public function parseLinks (&$parser, &$text) {
-		//$l=new NLLink('[[Category:yyyyy:zzzzz]]');
-		//PVD($l);
-		//PVD($l->render());
 		$currentNS = $parser->mTitle->getNamespace();
 		$currentNSName = ''; // fill in
 		$defaultNSName = 'Masterwork';
 		$oldText = $text;
 		$newText = NLReplaceLinks($text, $defaultNSName);
-		$text .= "<pre>$oldText</pre><pre>$newText</pre>";
+		$text = $newText;
 		return true;
 	}
 }
