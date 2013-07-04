@@ -20,8 +20,6 @@ function NLReplaceLinks ($text, $nsText) {
 }
 
 function NLNSNameToID ($nsName) {
-	//PVD(debug_backtrace());
-	//set_error_handler('PVD');
 	$t = Title::newFromText("$nsName:Dummy text");
 	return $t->mNamespace;
 }
@@ -104,7 +102,8 @@ class NLLink {
 		$hasNS = false;
 		$nsText = '';
 		
-		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 ||
+		// Suppresses warnings on nonexistent pages
+		if (@strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
 			$hasNS = true;

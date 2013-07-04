@@ -19,9 +19,12 @@ $wgExtensionCredits['parserhook'][] = array(
 	'url' => 'https://github.com/lethosor/mw-namespace-links',
 );
 
-$wgNLConfigText = <<< TEXT
+// Temporary - will implement in a system message eventually
+if (!isset($wgNLConfigText)) {
+	$wgNLConfigText = <<< TEXT
 *DF2012=DF2012
 *DF2012 talk=DF2012
 *v0.31=v0.31
 *v0.31 talk=v0.31
 TEXT;
+}
