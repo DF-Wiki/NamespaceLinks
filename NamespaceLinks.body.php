@@ -9,6 +9,10 @@ function NLReplaceLinks ($text, $nsText) {
 	preg_match_all('/\[\[[^]]+\]\]/', $text, $links);
 	$links = $links[0];
 	foreach ($links as $linkText) {
+		if ($linkText[2] == '#') {
+			// Skip section links within current article (e.g. [[#section]])
+			continue;
+		}
 		$link = new NLLink($linkText);
 		if (!$link->hasNS) {
 			$link->nsText = $nsText;
