@@ -145,7 +145,10 @@ class NLHooks {
 	static public function parseLinks (&$parser, &$text) {
 		global $wgNLConfigMap;
 		$currentNSID = $parser->mTitle->getNamespace();
-		$defaultNSName = $wgNLConfigMap[$currentNSID];
+		$defaultNSName = NS_MAIN;
+		if (array_key_exists($currentNSID, $wgNLConfigMap)) {
+			$defaultNSName = $wgNLConfigMap[$currentNSID];
+		}
 		$oldText = $text;
 		$newText = NLReplaceLinks($text, $defaultNSName);
 		$text = $newText;
