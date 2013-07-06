@@ -93,6 +93,15 @@ class NLLink {
 			$title = $text = $parts[0];
 		}
 		
+		if ($text[0] == ':') {
+			/* For links like [[:Page]] (as in MediaWiki:Searchmenu-new)
+			 * or [[:Category:Name]] (for escaping category links),
+			 * the colon can safely be left off the text displayed
+			 * in the link.
+			 */
+			$text = substr($text, 1);
+		}
+		
 		$wtitle = Title::newFromText($title);
 		$this->wtitle = $wtitle;
 		
@@ -131,6 +140,9 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
+		if (!$this->nsText || !strlen($this->nsText)) {
+			return "[[{$this->title}|{$this->text}]]";
+		}
 		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
 	}
 }
