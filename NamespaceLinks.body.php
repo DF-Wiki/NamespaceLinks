@@ -112,7 +112,7 @@ class NLLink {
 		 */
 		
 		
-		$hasNS = false;
+		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
 		
 		// Suppresses warnings on nonexistent pages
@@ -140,7 +140,7 @@ class NLLink {
 		 *
 		 * Returns [[ns:title|text]]
 		 */
-		if (!$this->nsText || !strlen($this->nsText)) {
+		if (!$this->hasNS && !$this->nsText) {
 			return "[[{$this->title}|{$this->text}]]";
 		}
 		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
