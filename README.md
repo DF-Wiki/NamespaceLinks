@@ -3,7 +3,7 @@ mw-namespace-links
 
 MediaWiki extension allowing default link namespaces to be changed
 
-For example, links in a certain namespace without a namespace explicitly specified (e.g. `[[linkText]]` or `[[linkTitle|linkText]]`) can be changed to link to a different namespace ( __without__ using the prefix or pipe trick). 
+Essentially, links in a certain namespace without a namespace explicitly specified (e.g. `[[linkText]]` or `[[linkTitle|linkText]]`) can be changed to link to a different namespace ( __without__ using the prefix or pipe trick). 
 
 Example:
 ```
