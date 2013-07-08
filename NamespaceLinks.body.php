@@ -115,8 +115,11 @@ class NLLink {
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
 		
-		// Suppresses warnings on nonexistent pages
-		if (@strpos($linkContents, $wtitle->mUserCaseDBKey) > 0 ||
+		/* 1 instead of 0 fixes issues with DF2012:Cat linking to [[:cat]],
+		 * since it accounts for the possible leading :, which MediaWiki
+		 * ignores by default.
+		 */
+		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
 			$hasNS = true;
@@ -141,9 +144,12 @@ class NLLink {
 		 * Returns [[ns:title|text]]
 		 */
 		if (!$this->hasNS && !$this->nsText) {
-			return "[[{$this->title}|{$this->text}]]";
+			$str = "[[{$this->title}|{$this->text}]]";
 		}
-		return "[[{$this->nsText}:{$this->title}|{$this->text}]]";
+		else {
+			$str = "[[{$this->nsText}:{$this->title}|{$this->text}]]";
+		}
+		return preg_replace('/([^:]+):+([^|]+)/', '$1:$2', $str);
 	}
 }
 
