@@ -13,6 +13,12 @@ function NLReplaceLinks ($text, $nsText) {
 			// Skip section links within current article (e.g. [[#section]])
 			continue;
 		}
+		// Replace multiple leaading :'s with a single :
+		$linkText = preg_replace('/^\[\[:+/', '[[:', $linkText);
+		if (preg_match('/::/', $linkText)) {
+			// Skip links that have double colons, like MediaWiki
+			continue;
+		}
 		$link = new NLLink($linkText);
 		if (!$link->hasNS) {
 			$link->nsText = $nsText;
