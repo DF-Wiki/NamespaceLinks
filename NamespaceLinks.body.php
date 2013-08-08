@@ -26,7 +26,7 @@ function NLReplaceLinks ($text, $nsText) {
 		if (!$link->valid) {
 			continue;
 		}
-		if ($link->ns == NS_IMAGE) {
+		if ($link->ns == NS_IMAGE || $link->ns == NS_CATEGORY) {
 			continue;
 		}
 		if (!$link->hasNS) {
