@@ -189,6 +189,7 @@ class NLHooks {
 		$wgNLConfigMap = NLParseConfig($wgNLConfigText);
 		
 		$parser->setFunctionHook('nlenable', 'NLHooks::enable');
+		$parser->setFunctionHook('nlenabled', 'NLHooks::enabled');
 		
 		return true;
 	}
@@ -223,6 +224,23 @@ class NLHooks {
 				break;
 		}
 		$wgNLEnabled = $enabled;
+	}
+	static public function enabled (&$parser) {
+		global $wgNLEnabled;
+		$args = func_get_args();
+		if (count($args) <= 2) {
+			// {{#nlenabled:}} or {{#nlenabled:1}}
+			return $wgNLEnabled ? ($args[1] ? $args[1] : '1') : '';
+		}
+		else {
+			// {{#nlenabled:1|0}}
+			if ($wgNLEnabled) {
+				return $args[1];
+			}
+			else {
+				return $args[2];
+			}
+		}
 	}
 }
 
