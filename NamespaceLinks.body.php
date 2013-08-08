@@ -140,6 +140,10 @@ class NLLink {
 		 * since it accounts for the possible leading :, which MediaWiki
 		 * ignores by default.
 		 */
+		if ($wtitle->mUserCaseDBKey == '') {
+			$this->valid = false;
+			return;
+		}
 		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
