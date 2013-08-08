@@ -1,5 +1,8 @@
 <?php
 
+$wgNLConfigMap = array();
+$wgNLEnabled = true;
+
 function NLReplaceLinks ($text, $nsText) {
 	/*
 	 * Assign all links in the given text with no namespace the namespace
@@ -20,6 +23,12 @@ function NLReplaceLinks ($text, $nsText) {
 			continue;
 		}
 		$link = new NLLink($linkText);
+		if (!$link->valid) {
+			continue;
+		}
+		if ($link->ns == NS_IMAGE) {
+			continue;
+		}
 		if (!$link->hasNS) {
 			$link->nsText = $nsText;
 		}
@@ -78,6 +87,7 @@ class NLLink {
 		 * Takes a string of text in wiki link format
 		 */
 		// Safety check
+		$this->valid = true;
 		$matches = array();
 		$isLink = preg_match('/\[\[[^]]+\]\]/', $text, $matches);
 		if (!$isLink) {
@@ -110,6 +120,11 @@ class NLLink {
 		
 		$wtitle = Title::newFromText($title);
 		$this->wtitle = $wtitle;
+		
+		if ($wtitle == null) {
+			$this->valid = false;
+			return;
+		}
 		
 		/* Check for an explicit namespace by comparing the link contents
 		 * with $wtitle->mUserCaseDBKey (which is the original, case-sensitive
@@ -159,14 +174,20 @@ class NLLink {
 	}
 }
 
-$wgNLConfigMap = array();
 class NLHooks {
 	static public function init (&$parser) {
 		global $wgNLConfigText, $wgNLConfigMap;
 		$wgNLConfigMap = NLParseConfig($wgNLConfigText);
+		
+		$parser->setFunctionHook('nlenable', 'NLHooks::enable');
+		
 		return true;
 	}
 	static public function parseLinks (&$parser, &$text) {
+		global $wgNLEnabled;
+		if (!$wgNLEnabled) {
+			return true;
+		}
 		global $wgNLConfigMap;
 		$currentNSID = $parser->mTitle->getNamespace();
 		$defaultNSName = NS_MAIN;
@@ -178,6 +199,21 @@ class NLHooks {
 		$text = $newText;
 		return true;
 	}
+	static public function enable (&$parser, $set_enabled='1') {
+		global $wgNLEnabled;
+		$set_enabled = strtolower($set_enabled);
+		switch ($set_enabled) {
+			case '0':
+			case 'no':
+			case 'false':
+			case 'n':
+				$enabled = false;
+				break;
+			default:
+				$enabled = true;
+				break;
+		}
+		$wgNLEnabled = $enabled;
+	}
 }
-
 

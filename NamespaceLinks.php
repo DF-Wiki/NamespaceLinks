@@ -2,10 +2,14 @@
 /*
  * Extension:NamespaceLinks
  *
- * Allows links to default to different namespaces based on their namespace.
+ * Allows links in specified namespaces to default to namespaces other than the
+ * main namespace.
  */
 
 require_once 'NamespaceLinks.body.php';
+require_once 'NamespaceLinks.i18n.php';
+
+$wgExtensionMessagesFiles['NamespaceLinks'] = dirname( __FILE__ ) . '/NamespaceLinks.i18n.php';
 
 $wgHooks['ParserFirstCallInit'][] = 'NLHooks::init';
 $wgHooks['InternalParseBeforeLinks'][] = 'NLHooks::parseLinks';
