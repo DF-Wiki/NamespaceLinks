@@ -109,6 +109,11 @@ class NLLink {
 			$title = $text = $parts[0];
 		}
 		
+		if ($text == '') {
+			$this->valid = false;
+			return;
+		}
+		
 		if ($text[0] == ':') {
 			/* For links like [[:Page]] (as in MediaWiki:Searchmenu-new)
 			 * or [[:Category:Name]] (for escaping category links),
