@@ -1,15 +1,16 @@
 mw-namespace-links
 ==================
 
-MediaWiki extension allowing default link namespaces to be changed
+This MediaWiki extension allows links in certain namespaces to default to non-main namespaces.
 
-Essentially, links in a certain namespace without a namespace explicitly specified (e.g. `[[linkText]]` or `[[linkTitle|linkText]]`) can be changed to link to a different namespace ( __without__ using the prefix or pipe trick). 
+This extension has been tested on MediaWiki 1.21.1, but should work on at least 1.18+.
 
-Example configuration:
-```
-User=User
-*User talk=User
-```
-would cause all links in the `User` and `User talk` namespaces without a specified namespace to link to the `User` namespace.
+Installation
+------------
+This extension can be installed the same way as other extensions, although you may want to rename the entension's 
+folder to `NamespaceLinks` for consistency.
 
-* Note that the `*`'s are optional, but they are recommended to improve readability when rendered by MediaWiki (similar to other system messages, such as MediaWiki:Sidebar).
+Usage
+-----
+See the [wiki](https://github.com/lethosor/mw-namespace-links/wiki).
+
