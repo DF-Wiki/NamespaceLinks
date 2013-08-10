@@ -7,7 +7,6 @@
  */
 
 require_once 'NamespaceLinks.body.php';
-require_once 'NamespaceLinks.i18n.php';
 
 $wgExtensionMessagesFiles['NamespaceLinks'] = dirname( __FILE__ ) . '/NamespaceLinks.i18n.php';
 
@@ -22,13 +21,3 @@ $wgExtensionCredits['parserhook'][] = array(
 	'description' => 'Allows links to default to different namespaces based on their namespace.',
 	'url' => 'https://github.com/lethosor/mw-namespace-links',
 );
-
-// Temporary - will implement in a system message eventually
-if (!isset($wgNLConfigText)) {
-	$wgNLConfigText = <<< TEXT
-*DF2012=DF2012
-*DF2012 talk=DF2012
-*v0.31=v0.31
-*v0.31 talk=v0.31
-TEXT;
-}

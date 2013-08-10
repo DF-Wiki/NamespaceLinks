@@ -1,7 +1,6 @@
 <?php
 /*
  * Internationalization file for NamespaceLinks extension.
- *
  */
 
 $magicWords = array();
@@ -13,15 +12,10 @@ $magicWords['en'] = array(
 
 $messages = array();
 
-/*
- * English
- */
-
 $messages['en'] = array(
-	'namespacelinks-header' => 'Namespace Links Header Text'
+	'namespace-links' => ''
 );
 
-
 $messages['qqq'] = array(
-	'namespacelinks-header' => 'Header doc'
+	'namespace-links' => 'NamespaceLinks configuration'
 );

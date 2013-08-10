@@ -185,8 +185,8 @@ class NLLink {
 
 class NLHooks {
 	static public function init (&$parser) {
-		global $wgNLConfigText, $wgNLConfigMap;
-		$wgNLConfigMap = NLParseConfig($wgNLConfigText);
+		global $wgNLConfigMap;
+		$wgNLConfigMap = NLParseConfig(wfMessage('namespace-links')->plain());
 		
 		$parser->setFunctionHook('nlenable', 'NLHooks::enable');
 		$parser->setFunctionHook('nlenabled', 'NLHooks::enabled');
