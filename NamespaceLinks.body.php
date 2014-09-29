@@ -133,22 +133,17 @@ class NLLink {
 		
 		/* Check for an explicit namespace by comparing the link contents
 		 * with $wtitle->mUserCaseDBKey (which is the original, case-sensitive
-		 * title). If they aren't equal, then that means a namespace was
-		 * parsed out
+		 * title). If they aren't equal, a namespace was parsed out.
 		 */
 		
 		
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
-		
-		/* 1 instead of 0 fixes issues with DF2012:Cat linking to [[:cat]],
-		 * since it accounts for the possible leading :, which MediaWiki
-		 * ignores by default.
-		 */
 		if ($wtitle->mUserCaseDBKey == '') {
 			$this->valid = false;
 			return;
 		}
+
 		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
