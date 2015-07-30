@@ -132,19 +132,19 @@ class NLLink {
 		}
 		
 		/* Check for an explicit namespace by comparing the link contents
-		 * with $wtitle->mUserCaseDBKey (which is the original, case-sensitive
+		 * with $wtitle->getUserCaseDBKey() (which is the original, case-sensitive
 		 * title). If they aren't equal, a namespace was parsed out.
 		 */
 		
 		
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
-		if ($wtitle->mUserCaseDBKey == '') {
+		if ($wtitle->getUserCaseDBKey() == '') {
 			$this->valid = false;
 			return;
 		}
 
-		if (strpos($linkContents, $wtitle->mUserCaseDBKey) > 1 ||
+		if (strpos($linkContents, $wtitle->getUserCaseDBKey()) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
 			$hasNS = true;
