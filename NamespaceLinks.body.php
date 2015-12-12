@@ -16,6 +16,9 @@ function NLReplaceLinks ($text, $nsText) {
 			// Skip section links within current article (e.g. [[#section]])
 			continue;
 		}
+		if ($linkText[2] == '/') {
+			continue;
+		}
 		// Replace multiple leaading :'s with a single :
 		$linkText = preg_replace('/^\[\[:+/', '[[:', $linkText);
 		if (preg_match('/::/', $linkText)) {
@@ -35,7 +38,7 @@ function NLReplaceLinks ($text, $nsText) {
 		$text = str_replace($linkText, $link->render(), $text);
 	}
 	return $text;
-	
+
 }
 
 function NLNSNameToID ($nsName) {
@@ -50,7 +53,7 @@ function NLParseConfig ($text) {
 	 * *ns=defaultns
 	 * *ns2=defaultns2
 	 * ...
-	 * 
+	 *
 	 * Returns an array of old_ns_id => new_ns_name pairs (for convenience)
 	 */
 	$map = array();
@@ -81,7 +84,7 @@ class NLLink {
 	public $text;
 	public $ns;
 	public $nsText;
-	
+
 	public function __construct ($text) {
 		/*
 		 * Takes a string of text in wiki link format
@@ -97,7 +100,7 @@ class NLLink {
 		// Remove leading [[ and trailing ]]
 		$linkContents = substr($linkText, 2, strlen($linkText) - 4);
 		$this->contents = $linkContents;
-		
+
 		$parts = preg_split('/\|/', $linkContents, 2);
 		$title = '';
 		$text = '';
@@ -108,12 +111,12 @@ class NLLink {
 		else {
 			$title = $text = $parts[0];
 		}
-		
+
 		if ($text == '') {
 			$this->valid = false;
 			return;
 		}
-		
+
 		if ($text[0] == ':') {
 			/* For links like [[:Page]] (as in MediaWiki:Searchmenu-new)
 			 * or [[:Category:Name]] (for escaping category links),
@@ -122,21 +125,21 @@ class NLLink {
 			 */
 			$text = substr($text, 1);
 		}
-		
+
 		$wtitle = Title::newFromText($title);
 		$this->wtitle = $wtitle;
-		
+
 		if ($wtitle == null) {
 			$this->valid = false;
 			return;
 		}
-		
+
 		/* Check for an explicit namespace by comparing the link contents
 		 * with $wtitle->getUserCaseDBKey() (which is the original, case-sensitive
 		 * title). If they aren't equal, a namespace was parsed out.
 		 */
-		
-		
+
+
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
 		if ($wtitle->getUserCaseDBKey() == '') {
@@ -152,15 +155,15 @@ class NLLink {
 			$nsText = $title[0];
 			$title = $title[1];
 		}
-		
+
 		$this->hasNS = $hasNS;
-		
+
 		$this->ns = $wtitle->mNamespace;
 		$this->nsText = $nsText;
 		$this->title = $title;
 		$this->text = $text;
-		
-		
+
+
 	}
 	public function render () {
 		/*
@@ -182,10 +185,10 @@ class NLHooks {
 	static public function init (&$parser) {
 		global $wgNLConfigMap, $wgLanguageCode;
 		$wgNLConfigMap = NLParseConfig(wfMessage('namespace-links')->inLanguage($wgLanguageCode)->plain());
-		
+
 		$parser->setFunctionHook('nlenable', 'NLHooks::enable');
 		$parser->setFunctionHook('nlenabled', 'NLHooks::enabled');
-		
+
 		return true;
 	}
 	static public function parseLinks (&$parser, &$text) {
