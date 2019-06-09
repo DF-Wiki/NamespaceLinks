@@ -12,12 +12,12 @@ $wgExtensionMessagesFiles['NamespaceLinks'] = dirname( __FILE__ ) . '/NamespaceL
 
 $wgHooks['ParserFirstCallInit'][] = 'NLHooks::init';
 $wgHooks['InternalParseBeforeLinks'][] = 'NLHooks::parseLinks';
- 
+
 $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
 	'name' => 'NamespaceLinks',
 	'author' => 'Lethosor',
-	'version' => '0.0',
+	'version' => '0.1',
 	'description' => 'Allows links to default to different namespaces based on their namespace.',
 	'url' => 'https://github.com/lethosor/mw-namespace-links',
 );

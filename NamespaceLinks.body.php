@@ -99,8 +99,6 @@ class NLLink {
 		$linkText = $matches[0];
 		// Remove leading [[ and trailing ]]
 		$linkContents = substr($linkText, 2, strlen($linkText) - 4);
-		// replace spaces with _ to match getUserCaseDBKey()
-		$linkContents = strtr($linkContents, ' ', '_');
 		$this->contents = $linkContents;
 
 		$parts = preg_split('/\|/', $linkContents, 2);
@@ -149,7 +147,8 @@ class NLLink {
 			return;
 		}
 
-		if (strpos($linkContents, $wtitle->getUserCaseDBKey()) > 1 ||
+		// replace spaces with _ to match getUserCaseDBKey()
+		if (strpos(strtr($linkContents, ' ', '_'), $wtitle->getUserCaseDBKey()) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
 			$hasNS = true;
