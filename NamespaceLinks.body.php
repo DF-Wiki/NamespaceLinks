@@ -99,6 +99,8 @@ class NLLink {
 		$linkText = $matches[0];
 		// Remove leading [[ and trailing ]]
 		$linkContents = substr($linkText, 2, strlen($linkText) - 4);
+		// replace spaces with _ to match getUserCaseDBKey()
+		$linkContents = strtr($linkContents, ' ', '_');
 		$this->contents = $linkContents;
 
 		$parts = preg_split('/\|/', $linkContents, 2);
