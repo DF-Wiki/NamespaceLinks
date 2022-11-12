@@ -29,7 +29,7 @@ function NLReplaceLinks ($text, $nsText) {
 		if (!$link->valid) {
 			continue;
 		}
-		if ($link->ns == NS_IMAGE || $link->ns == NS_CATEGORY) {
+		if ($link->ns == NS_FILE || $link->ns == NS_CATEGORY) {
 			continue;
 		}
 		if (!$link->hasNS) {
@@ -142,13 +142,14 @@ class NLLink {
 
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
-		if ($wtitle->getUserCaseDBKey() == '') {
+		if ($wtitle->getDBkey() == '') {
 			$this->valid = false;
 			return;
 		}
 
-		// replace spaces with _ to match getUserCaseDBKey()
-		if (strpos(strtr($linkContents, ' ', '_'), $wtitle->getUserCaseDBKey()) > 1 ||
+		// replace spaces with _ to match getDBkey()
+		// 1.33 removed getUserCaseDBKey(), so approximate the comparison with ucfirst(getDBkey())
+		if (strpos(ucfirst(strtr($linkContents, ' ', '_')), ucfirst($wtitle->getDBkey())) > 1 ||
 		    $wtitle->mInterwiki ||
 		    $wtitle->mNamespace) {
 			$hasNS = true;
