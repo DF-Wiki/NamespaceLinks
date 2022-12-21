@@ -2,6 +2,7 @@
 
 $wgNLConfigMap = array();
 $wgNLEnabled = true;
+$wgNLMainAliases = array();
 
 function NLReplaceLinks ($text, $nsText) {
 	/*
@@ -129,29 +130,27 @@ class NLLink {
 		$wtitle = Title::newFromText($title);
 		$this->wtitle = $wtitle;
 
-		if ($wtitle == null) {
+		if ($wtitle == null || $wtitle->getDBkey() == '') {
 			$this->valid = false;
 			return;
 		}
-
-		/* Check for an explicit namespace by comparing the link contents
-		 * with $wtitle->getUserCaseDBKey() (which is the original, case-sensitive
-		 * title). If they aren't equal, a namespace was parsed out.
-		 */
-
 
 		$hasNS = false; // Whether the link has an *explicit* namespace
 		$nsText = '';
-		if ($wtitle->getDBkey() == '') {
-			$this->valid = false;
-			return;
+
+		// check for main aliases
+		$hasExplicitMainAlias = false;
+		global $wgNLMainAliases;
+		if ($wtitle->mNamespace === NS_MAIN && strpos($linkContents, ':') !== false) {
+			foreach ($wgNLMainAliases as $alias) {
+				if (strpos(strtolower(trim($linkContents)), strtolower($alias) . ':') === 0) {
+					$hasExplicitMainAlias = true;
+					break;
+				}
+			}
 		}
 
-		// replace spaces with _ to match getDBkey()
-		// 1.33 removed getUserCaseDBKey(), so approximate the comparison with ucfirst(getDBkey())
-		if (strpos(ucfirst(strtr($linkContents, ' ', '_')), ucfirst($wtitle->getDBkey())) > 1 ||
-		    $wtitle->mInterwiki ||
-		    $wtitle->mNamespace) {
+		if ($wtitle->mInterwiki || $wtitle->mNamespace || $hasExplicitMainAlias) {
 			$hasNS = true;
 			$title = preg_split('/:/', $title, 2);
 			$nsText = $title[0];
@@ -190,6 +189,13 @@ class NLHooks {
 
 		$parser->setFunctionHook('nlenable', 'NLHooks::enable');
 		$parser->setFunctionHook('nlenabled', 'NLHooks::enabled');
+
+		global $wgNLMainAliases, $wgNamespaceAliases;
+		foreach ($wgNamespaceAliases as $key => $ns) {
+			if ($ns === NS_MAIN) {
+				$wgNLMainAliases[] = strtolower($key);
+			}
+		}
 
 		return true;
 	}
