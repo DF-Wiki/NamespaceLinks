@@ -17,7 +17,7 @@ $wgExtensionCredits['parserhook'][] = array(
 	'path' => __FILE__,
 	'name' => 'NamespaceLinks',
 	'author' => 'Lethosor',
-	'version' => '0.1.2',
+	'version' => '0.3.2',
 	'description' => 'Allows links to default to different namespaces based on their namespace.',
 	'url' => 'https://github.com/DF-Wiki/NamespaceLinks',
 );
